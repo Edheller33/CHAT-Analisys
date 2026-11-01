@@ -1,0 +1,17 @@
+{
+  "id": "./",
+  "name": "CHAT-Analisys",
+  "short_name": "CHAT-Analisys",
+  "description": "Análisis local de chats, audios, llamadas, imágenes y emojis.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0C121C",
+  "theme_color": "#0C121C",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}
+  ]
+}
