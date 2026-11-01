@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; manifest-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
-<meta name="theme-color" content="#ffffff">
-<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#0C121C">
+<meta name="color-scheme" content="dark">
 <meta name="description" content="CHAT-Analisys: análisis local de chats y números de teléfono.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>CHAT-Analisys</title>
 <style>
-:root{--bg:#F3F5F9;--line:#E3E8F0;--line2:#CBD5E1;--pri:#1F4FD8;--pri2:#1740B0;--soft:#EAF0FE;--ink:#0F1B33;--mut:#5B6780;--warn:#8A4B08;--bad:#C62828}
+:root{--bg:#F3F5F9;--line:#E3E8F0;--line2:#CBD5E1;--pri:#5B8DB8;--pri2:#1740B0;--soft:#EAF0FE;--ink:#0F1B33;--mut:#5B6780;--warn:#8A4B08;--bad:#C62828}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
 [hidden]{display:none!important}
@@ -75,6 +75,17 @@ ul{padding-left:18px;margin:6px 0}li{margin:4px 0}
 #toast{position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));background:var(--ink);color:#fff;padding:11px 14px;border-radius:12px;z-index:9;font-size:13px;box-shadow:0 6px 20px rgba(15,27,51,.25)}
 @media print{header,nav,.tabs,.btn,#toast{display:none!important}body{background:#fff}.card,.kpi{box-shadow:none;break-inside:avoid}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+:root{--bg:#0C121C;--line:#243044;--line2:#33425A;--pri:#3F6D99;--pri2:#365F87;--soft:#16212F;--ink:#E6EBF2;--mut:#93A0B4;--warn:#E0B15A;--bad:#E58A8A;--acc:#9CC0E2;--pn:#111A28}
+body{font-feature-settings:"tnum" 1}
+header{background:rgba(12,18,28,.94)}nav{background:#0F1724}
+.card,.hero,.kpi,input,select,.tabs button,.btn.sec{background:var(--pn);border-radius:10px}
+.hero{border-top:3px solid var(--pri)}
+.btn{border-radius:8px;color:#fff}.btn.sec{color:var(--acc);border-color:var(--line2)}.btn.sec:active{background:var(--soft)}.btn.bad{background:var(--pn);border-color:#6B3A3A;color:var(--bad)}
+.kpi b,.chips b,nav button.on,#back{color:var(--acc)}.logo{background:var(--pri)}
+.bar .t{background:#1B2638}.warn,.mid{background:#2A2314;color:var(--warn)}.hi{background:#2E1A1A;color:var(--bad)}.ok{background:var(--soft);color:var(--acc)}
+.ico:active{background:#2E1A1A}.tabs button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+textarea{color-scheme:dark}#toast{background:#1B2638;border:1px solid var(--line2)}
+@media print{body{background:#fff;color:#000}.card,.kpi{background:#fff}}
 </style>
 </head>
 <body>
@@ -83,15 +94,18 @@ ul{padding-left:18px;margin:6px 0}li{margin:4px 0}
 <nav>
 <button data-v="chats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/></svg>Chats</button>
 <button data-v="numeros"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Números</button>
+<button data-v="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h2M8 8v8M12 4v16M16 9v6M20 12h-1"/></svg>Laboratorio</button>
 <button data-v="ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>Ajustes</button>
 </nav>
-<input id="file" type="file" multiple hidden accept=".txt,.zip,.json,text/plain,application/zip,application/json,application/octet-stream">
+<input id="file" type="file" multiple hidden accept=".txt,.zip,.json,.csv,.xml,text/csv,text/xml,text/plain,application/zip,application/json,application/octet-stream">
+<input id="fa" type="file" multiple hidden accept="audio/*,.opus,.ogg,.m4a,.aac,.mp3,.wav,.3gp">
+<input id="fi" type="file" multiple hidden accept="image/*">
 <input id="bk" type="file" hidden accept=".json,application/json">
 <div id="toast" hidden></div>
 <script>
 'use strict';
 // <ENGINE>
-const VERSION='2.0.0';
+const VERSION='3.0.0';
 const GAP=6*3600*1000;
 const nz=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const p2=n=>String(n).padStart(2,'0');
@@ -149,8 +163,8 @@ function parseTG(j){
 function parseChat(text){
   let rows=[];
   const t=text.replace(/^\ufeff/,'').trimStart();
-  if(t[0]==='{'){try{rows=parseTG(JSON.parse(t));}catch(e){rows=[];}}
-  if(!rows.length)rows=parseWA(text);
+  if(t[0]==='{'||t[0]==='['){try{const j=JSON.parse(t);rows=parseTG(j);if(!rows.length)rows=parseMeta(j);if(!rows.length)rows=parseGJ(j);}catch(e){rows=[];}}
+  if(!rows.length)rows=parseWA(text);if(!rows.length)rows=parseISO(text);if(!rows.length&&t[0]==='<')rows=parseSMS(t);if(!rows.length)rows=parseCSV(t);
   const senders=[],idx=new Map(),msgs=[];
   for(const [ts,name,txt] of rows){
     let i=idx.get(name);if(i===undefined){i=senders.length;idx.set(name,i);senders.push(name);}
@@ -317,7 +331,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const nf=n=>new Intl.NumberFormat('es-MX').format(n);
 const fd=ts=>new Date(ts).toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'});
 const pct=(a,b)=>b?Math.round(a/b*100):0;
-const COLORS=['#1F4FD8','#7A5AF8','#F59E0B','#E11D74','#0EA5E9','#475569'];
+const COLORS=['#5B8DB8','#9A86C4','#C9A45C','#C0708F','#4FA3A5','#7E8CA3'];
 const ICO={trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>',plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>'};
 function fmtDur(ms){if(!ms)return '—';const s=ms/1000;if(s<60)return Math.round(s)+' s';if(s<3600)return Math.round(s/60)+' min';if(s<86400)return (s/3600).toFixed(1)+' h';return (s/86400).toFixed(1)+' d';}
 function toast(t,ms=3500){const e=$('#toast');e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,ms);}
@@ -345,7 +359,7 @@ async function unzipFirstText(buf){
     const name=new TextDecoder().decode(u.subarray(p+46,p+46+nl));
     ents.push({name,meth,csz,off});p+=46+nl+el+cl;
   }
-  const pick=ents.find(x=>/\.txt$/i.test(x.name)&&/chat/i.test(x.name))||ents.find(x=>/\.txt$/i.test(x.name))||ents.find(x=>/\.json$/i.test(x.name));
+  const pick=ents.find(x=>/\.txt$/i.test(x.name)&&/chat/i.test(x.name))||ents.find(x=>/\.txt$/i.test(x.name))||ents.find(x=>/\.(json|csv|xml)$/i.test(x.name));
   if(!pick)throw new Error('El ZIP no contiene un .txt');
   const lo=pick.off,start=lo+30+v.getUint16(lo+26,true)+v.getUint16(lo+28,true);
   const data=u.subarray(start,start+pick.csz);
@@ -372,7 +386,7 @@ async function importFiles(files){
       const p=parseChat(text);
       if(!p.msgs.length)throw new Error('No se reconoció ningún mensaje (formato no compatible).');
       const id=crypto.randomUUID();
-      const name=f.name.replace(/\.(txt|zip|json)$/i,'').replace(/^(chat de whatsapp con|whatsapp chat with|chat de whatsapp -|whatsapp chat -)\s*/i,'').trim()||'Chat';
+      const name=f.name.replace(/\.(txt|zip|json|csv|xml)$/i,'').replace(/^(chat de whatsapp con|whatsapp chat with|chat de whatsapp -|whatsapp chat -)\s*/i,'').trim()||'Chat';
       const meta={id,name,n:p.msgs.length,from:p.msgs[0][0],to:p.msgs[p.msgs.length-1][0],senders:p.senders,added:Date.now()};
       await dbPut('msgs',{id,senders:p.senders,msgs:p.msgs});
       await dbPut('chats',meta);
@@ -384,7 +398,7 @@ async function importFiles(files){
 }
 
 /* ---------- Gráficos ---------- */
-function barSvg(vals,labels,color='#1F4FD8'){
+function barSvg(vals,labels,color='#5B8DB8'){
   const W=320,H=110,n=vals.length;if(!n)return '';let mx=1;for(const v of vals)if(v>mx)mx=v;const bw=W/n;
   return `<svg viewBox="0 0 ${W} ${H+16}" class="ch" role="img" aria-label="Gráfico de barras">${vals.map((v,i)=>{const h=v/mx*H;return `<rect x="${(i*bw).toFixed(1)}" y="${(H-h).toFixed(1)}" width="${Math.max(.8,bw-1).toFixed(1)}" height="${h.toFixed(1)}" fill="${color}" opacity=".85"/>`;}).join('')}<text class="t" x="0" y="${H+12}">${esc(labels[0]||'')}</text><text class="t" x="${W}" y="${H+12}" text-anchor="end">${esc(labels[n-1]||'')}</text></svg>`;
 }
@@ -392,7 +406,7 @@ function lineSvg(vals,labels){
   const W=320,H=110,n=vals.length;if(n<2)return '<p class="mut">Datos insuficientes para la tendencia.</p>';
   let m=0.1;for(const v of vals)if(Math.abs(v)>m)m=Math.abs(v);
   const pts=vals.map((v,i)=>`${(i/(n-1)*W).toFixed(1)},${(H/2-v/m*(H/2-6)).toFixed(1)}`).join(' ');
-  return `<svg viewBox="0 0 ${W} ${H+16}" class="ch" role="img" aria-label="Tendencia"><line x1="0" x2="${W}" y1="${H/2}" y2="${H/2}" stroke="#CBD5E1" stroke-dasharray="3 3"/><polyline fill="none" stroke="#1F4FD8" stroke-width="2.5" stroke-linejoin="round" points="${pts}"/><text class="t" x="0" y="${H+12}">${esc(labels[0]||'')}</text><text class="t" x="${W}" y="${H+12}" text-anchor="end">${esc(labels[n-1]||'')}</text><text class="t" x="2" y="10">+</text><text class="t" x="2" y="${H-2}">−</text></svg>`;
+  return `<svg viewBox="0 0 ${W} ${H+16}" class="ch" role="img" aria-label="Tendencia"><line x1="0" x2="${W}" y1="${H/2}" y2="${H/2}" stroke="#CBD5E1" stroke-dasharray="3 3"/><polyline fill="none" stroke="#5B8DB8" stroke-width="2.5" stroke-linejoin="round" points="${pts}"/><text class="t" x="0" y="${H+12}">${esc(labels[0]||'')}</text><text class="t" x="${W}" y="${H+12}" text-anchor="end">${esc(labels[n-1]||'')}</text><text class="t" x="2" y="10">+</text><text class="t" x="2" y="${H-2}">−</text></svg>`;
 }
 function heatHtml(h){
   const D=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];let mx=1;for(const r of h)for(const v of r)if(v>mx)mx=v;
@@ -405,7 +419,7 @@ const kpi=(l,v)=>`<div class="kpi"><b>${v}</b><span>${l}</span></div>`;
 const bar=(name,v,tot,i)=>`<div class="bar"><div class="l"><span>${esc(name)}</span><span>${nf(v)} · ${pct(v,tot)}%</span></div><div class="t"><i style="width:${pct(v,tot)}%;background:${COLORS[i%6]}"></i></div></div>`;
 
 /* ---------- Pestañas de chat ---------- */
-function donut(P,N,U){const T=P+N+U||1,R=40,L=2*Math.PI*R,C=[['#1F4FD8','Positivo',P],['#E5484D','Negativo',N],['#CBD5E1','Neutral',U]];let o=0;
+function donut(P,N,U){const T=P+N+U||1,R=40,L=2*Math.PI*R,C=[['#5B8DB8','Positivo',P],['#E5484D','Negativo',N],['#CBD5E1','Neutral',U]];let o=0;
   return `<div class="donut"><svg viewBox="0 0 100 100" width="112" height="112" role="img" aria-label="Distribución del tono"><g transform="rotate(-90 50 50)" fill="none" stroke-width="14">${C.map(([c,,v])=>{const l=v/T*L,x=`<circle cx="50" cy="50" r="${R}" stroke="${c}" stroke-dasharray="${l.toFixed(2)} ${(L-l).toFixed(2)}" stroke-dashoffset="${(-o).toFixed(2)}"/>`;o+=l;return x;}).join('')}</g></svg><ul>${C.map(([c,n,v])=>`<li><i style="background:${c}"></i>${n} <b>${pct(v,T)}%</b></li>`).join('')}</ul></div>`;}
 function quick(a,d){let P=0,N=0;for(const s of a.st){P+=s.pos;N+=s.neg;}
   const top=a.st.reduce((m,s,i)=>s.n>a.st[m].n?i:m,0),df=(P-N)/Math.max(1,sum(a.st,'text')),ci=a.confIndex;
@@ -500,16 +514,16 @@ function doSearch(){
 /* ---------- Vistas ---------- */
 function vChats(){
   const l=state.list;
-  return `<section class="hero"><h2>Análisis profundo de chats</h2><p class="mut">Importa un chat exportado (.txt o .zip de WhatsApp, .json de Telegram). Todo se procesa en este dispositivo.</p><button class="btn" data-act="import">${ICO.plus}Importar chat</button><div id="prog" class="mut"></div></section>`+
+  return `<section class="hero"><h2>Análisis profundo de chats</h2><p class="mut">Importa exportaciones de WhatsApp (.txt/.zip), Telegram y Messenger/Instagram (.json), SMS Backup (.xml), Signal mediante exportadores (.txt/.json) o un CSV con fecha, remitente y mensaje. Audios, llamadas e imágenes se analizan en Laboratorio. Todo se procesa en este dispositivo.</p><button class="btn" data-act="import">${ICO.plus}Importar chat</button><div id="prog" class="mut"></div></section>`+
   (l.length?l.map(c=>`<article class="card"><div class="row"><div><b>${esc(c.name)}</b><div class="mut">${nf(c.n)} mensajes · ${c.senders.length} participantes</div><div class="mut">${fd(c.from)} → ${fd(c.to)}</div></div><button class="ico" data-act="delchat" data-id="${c.id}" aria-label="Eliminar chat">${ICO.trash}</button></div><button class="btn sec" data-act="open" data-id="${c.id}">Analizar</button></article>`).join('')
   :`<p class="mut c">Aún no hay chats. En WhatsApp: abre el chat → ⋮ → Más → Exportar chat → Sin multimedia, guarda el archivo e impórtalo aquí.</p>`);
 }
 function vChat(){
-  const T=[['res','Resumen'],['sen','Sentimientos'],['con','Conflicto'],['com','Comunicación'],['evo','Evolución'],['bus','Buscar']];
+  const T=[['res','Resumen'],['sen','Sentimientos'],['con','Conflicto'],['com','Comunicación'],['evo','Evolución'],['bus','Buscar'],['med','Medios'],['exp','Exportar']];
   const a=state.an,d=state.chat.data;
   const tabs=`<div class="tabs">${T.map(([k,l])=>`<button data-act="tab" data-v="${k}" class="${state.tab===k?'on':''}">${l}</button>`).join('')}</div>`;
   const warn=a.total<200?`<p class="warn">Muestra pequeña (${a.total} mensajes): los indicadores son poco fiables.</p>`:'';
-  const body={res:tRes,sen:tSen,con:tCon,com:tCom,evo:tEvo,bus:tBus}[state.tab](a,d);
+  const body={res:tRes,sen:tSen,con:tCon,com:tCom,evo:tEvo,bus:tBus,med:tMed,exp:tExp}[state.tab](a,d);
   return tabs+warn+body+'<button class="btn sec" data-act="print">Guardar informe en PDF</button>';
 }
 function countryOpts(sel){
@@ -543,7 +557,7 @@ function vSet(){
   <button class="btn sec" data-act="install" id="inst" hidden>Instalar aplicación</button><button class="btn bad" data-act="wipe">Borrar todos los datos</button></section>
   <section class="card pol"><h3>Política de privacidad</h3>
   <p><b>Qué hace CHAT-Analisys.</b> Es una herramienta independiente de análisis de chats y números de teléfono. No está afiliada a WhatsApp, Telegram ni a ninguna plataforma de mensajería y no accede a tus cuentas.</p>
-  <p><b>Datos que procesa.</b> Solo los archivos de chat que tú importas manualmente y los números que escribes. No solicita permisos de contactos, micrófono, cámara ni ubicación.</p>
+  <p><b>Datos que procesa.</b> Solo los archivos de chat que tú importas manualmente y los números que escribes. Los audios e imágenes que eliges en Laboratorio se analizan en memoria y no se guardan. No solicita permisos de contactos, micrófono, cámara ni ubicación.</p>
   <p><b>Dónde se guardan.</b> Exclusivamente en el almacenamiento local de este navegador (IndexedDB). No existen cuentas, servidores propios, analítica, publicidad ni rastreadores. La aplicación no envía tus conversaciones ni tus números a ningún tercero.</p>
   <p><b>Análisis.</b> Se calcula en el dispositivo con reglas estadísticas y léxicos; no utiliza servicios de IA remotos. Los resultados son indicadores orientativos y pueden contener errores.</p>
   <p><b>Tu control.</b> Puedes eliminar chats o números individualmente, o borrar todo desde “Borrar todos los datos”. Los respaldos .json que exportes quedan bajo tu custodia.</p>
@@ -551,13 +565,134 @@ function vSet(){
   <p><b>Alojamiento.</b> La aplicación se sirve desde GitHub Pages; el proveedor de alojamiento puede registrar los accesos técnicos a los archivos de la app, pero no recibe tus datos locales.</p></section>`;
 }
 
+/* ===== v3: formatos, medios, laboratorio, exportación ===== */
+state.lab='aud';state.labRes={};state.labTx='';
+const fmtT=s=>Math.floor(s/60)+':'+p2(Math.floor(s%60));
+function fixMoji(s){try{return decodeURIComponent(escape(s));}catch(e){return s;}}
+function parseMeta(j){const a=j&&j.messages;if(!Array.isArray(a)||!a[0]||!('timestamp_ms' in a[0]))return[];
+  return a.filter(m=>m.content||m.photos||m.audio_files||m.videos||m.sticker).map(m=>[m.timestamp_ms,fixMoji(m.sender_name||'?'),m.content?fixMoji(m.content):'<Media omitted>']);}
+function parseGJ(j){const a=Array.isArray(j)?j:(j.messages||j.data||[]);if(!Array.isArray(a))return[];
+  const g=(m,ks)=>{for(const k of ks)if(m[k]!=null&&typeof m[k]!=='object')return m[k];return null;};const out=[];
+  for(const m of a){if(!m||typeof m!=='object')continue;const d=g(m,['timestamp','date','time','sent_at','dateSent','ts']),s=g(m,['sender','from','author','name','source','senderName']),t=g(m,['body','text','message','content']);
+    if(d==null||t==null||!String(t))continue;const n=+d,ts=!isNaN(n)&&String(d).trim()!==''?(n<1e11?n*1000:n):new Date(d).getTime();if(isNaN(ts))continue;out.push([ts,String(s||'?'),String(t)]);}
+  return out;}
+function parseISO(raw){const out=[];let cur=null;const re=/^\[?(\d{4})-(\d{2})-(\d{2})[ T](\d{1,2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?\]?\s*[-–]?\s*([^:\n]{1,60}?):\s(.*)$/;
+  for(const ln of raw.replace(/[\u200e\u200f\u202a-\u202e\ufeff]/g,'').split(/\r?\n/)){const m=re.exec(ln);
+    if(m){cur=[new Date(+m[1],m[2]-1,+m[3],+m[4],+m[5],+(m[6]||0)).getTime(),m[7].trim(),m[8]];out.push(cur);}else if(cur)cur[2]+='\n'+ln;}
+  return out;}
+function parseSMS(x){const out=[],re=/<sms\s[^>]*>/g;let m;
+  const un=s=>s.replace(/&#10;/g,'\n').replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+  while((m=re.exec(x))){const g=k=>{const r=new RegExp('\\b'+k+'="([^"]*)"').exec(m[0]);return r?un(r[1]):'';};const ts=+g('date');if(!ts)continue;
+    const cn=g('contact_name');out.push([ts,g('type')==='2'?'Yo':(cn&&cn!=='(Unknown)'?cn:g('address')),g('body')]);}
+  return out;}
+function parseCSV(t){const sep=(t.split('\n')[0].match(/;/g)||[]).length>(t.split('\n')[0].match(/,/g)||[]).length?';':',';
+  const R=[];let row=[],c='',q=false;
+  for(let i=0;i<t.length;i++){const ch=t[i];
+    if(q){if(ch==='"'){if(t[i+1]==='"'){c+='"';i++;}else q=false;}else c+=ch;}
+    else if(ch==='"')q=true;else if(ch===sep){row.push(c);c='';}
+    else if(ch==='\n'){row.push(c);R.push(row);row=[];c='';}else if(ch!=='\r')c+=ch;}
+  row.push(c);R.push(row);if(R.length<2)return[];
+  const H=R[0].map(h=>nz(h.trim())),ix=(...k)=>H.findIndex(h=>k.some(x=>h.includes(x)));
+  const iD=ix('fecha','date','time','timestamp'),iS=ix('remitente','sender','from','autor','author','nombre','name'),iT=ix('mensaje','message','text','texto','body','content');
+  if(iD<0||iS<0||iT<0)return[];const out=[];
+  for(let k=1;k<R.length;k++){const r=R[k],v=(r[iD]||'').trim();if(!v||!r[iT])continue;
+    const ts=/^\d{10,13}$/.test(v)?(v.length===10?+v*1000:+v):new Date(v).getTime();if(isNaN(ts))continue;out.push([ts,(r[iS]||'').trim()||'?',r[iT]]);}
+  return out;}
+
+/* Medios, llamadas y emojis por remitente */
+const MT={img:/(imagen omitida|image omitted|\.(jpe?g|png|heic)\b)/i,aud:/(audio omitido|audio omitted|\.(opus|ogg|m4a|mp3|aac|amr|wav)\b|\bPTT-)/i,vid:/(video omitido|video omitted|\.(mp4|mov|3gp)\b)/i,stk:/(sticker omitido|sticker omitted|\.webp\b)/i,doc:/(documento omitido|document omitted|\.(pdf|docx?|xlsx?|pptx?|zip|apk)\b)/i,cal:/(llamada de voz|videollamada|voice call|video call|llamada perdida|missed (voice|video) call)/i,lnk:/https?:\/\//i};
+const MIS=/(perdida|missed)/i;
+function mediaStats(d){const S=d.senders.map(()=>({img:0,aud:0,vid:0,stk:0,doc:0,cal:0,mis:0,lnk:0,emo:new Map()}));
+  for(const [,si,t] of d.msgs){const s=S[si];for(const k in MT)if(MT[k].test(t)){s[k]++;if(k==='cal'&&MIS.test(t))s.mis++;}
+    const e=t.match(EMO_RE);if(e)for(const x of e)s.emo.set(x,(s.emo.get(x)||0)+1);}
+  return S;}
+function tMed(a,d){const S=mediaStats(d),H=[['img','Imág.'],['aud','Audio'],['vid','Video'],['stk','Stick.'],['doc','Doc.'],['cal','Llam.'],['mis','Perd.'],['lnk','Links']];
+  return `<section class="card"><h3>Medios y llamadas</h3><div style="overflow-x:auto"><table><tr><th></th>${H.map(h=>`<th>${h[1]}</th>`).join('')}</tr>${d.senders.map((n,i)=>`<tr><td>${esc(n)}</td>${H.map(h=>`<td>${S[i][h[0]]}</td>`).join('')}</tr>`).join('')}</table></div><p class="mut">Detectado por los marcadores del propio archivo (p. ej. «audio omitido», nombres de adjunto, avisos de llamada). Exportar con multimedia permite distinguir más tipos.</p></section>`+
+  d.senders.map((n,i)=>{const e=[...S[i].emo.entries()].sort((x,y)=>y[1]-x[1]).slice(0,10),tot=[...S[i].emo.values()].reduce((x,y)=>x+y,0);let p=0,q=0;
+    for(const [k,v] of S[i].emo){if(POSE.includes(k))p+=v;else if(NEGE.includes(k))q+=v;}
+    return `<section class="card"><h3 style="color:${COLORS[i%6]}">${esc(n)} · emojis</h3>${tot?`<div class="chips">${e.map(([k,v])=>`<span>${k} <b>${v}</b></span>`).join('')}</div><p class="mut">${nf(tot)} emojis · positivos ${pct(p,tot)}% · negativos ${pct(q,tot)}%</p>`:'<p class="mut">Sin emojis.</p>'}</section>`;}).join('');}
+
+/* Exportación */
+const csvq=s=>{s=String(s);if(/^[=+\-@]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';};
+function dl(name,mime,txt){const u=URL.createObjectURL(new Blob([txt],{type:mime})),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),5000);}
+function repData(){const a=state.an,d=state.chat.data,m=state.chat.meta;
+  return {app:'CHAT-Analisys',version:VERSION,chat:m.name,generado:new Date().toISOString(),periodo:[fd(m.from),fd(m.to)],mensajes:a.total,diasActivos:a.days.size,
+    participantes:d.senders.map((n,i)=>{const s=a.st[i],tx=Math.max(1,s.text);return {nombre:n,mensajes:s.n,palabras:s.words,palabrasPorMsg:+(s.words/tx).toFixed(1),emojis:s.emo,preguntasPct:pct(s.q,tx),multimedia:s.media,eliminados:s.del,respuestaMedianaSeg:Math.round(median(s.rt)/1000),positivos:s.pos,negativos:s.neg,afecto:s.aff,conflicto:+s.conf.toFixed(1)};}),
+    indiceConflictoPorMil:+a.confIndex.toFixed(2),palabrasTop:a.topWords.slice(0,15),emojisTop:a.topEmo};}
+const HD=['Participante','Mensajes','Palabras/msg','Emojis','Preguntas %','Resp. mediana (s)','Positivos','Negativos'];
+const rowP=p=>[p.nombre,p.mensajes,p.palabrasPorMsg,p.emojis,p.preguntasPct,p.respuestaMedianaSeg,p.positivos,p.negativos];
+function mdRep(R){return `# Informe CHAT-Analisys — ${R.chat}\n\nPeriodo: ${R.periodo.join(' → ')} · ${R.mensajes} mensajes · ${R.diasActivos} días activos\nÍndice de conflicto: ${R.indiceConflictoPorMil} por 1000 palabras\n\n| ${HD.join(' | ')} |\n|${HD.map(()=>'---').join('|')}|\n${R.participantes.map(p=>'| '+rowP(p).join(' | ')+' |').join('\n')}\n\nPalabras frecuentes: ${R.palabrasTop.map(x=>x[0]+' ('+x[1]+')').join(', ')}\n\nIndicadores estadísticos orientativos; no son evaluaciones psicológicas. Generado ${R.generado}.\n`;}
+function htmlRep(R){return `<!doctype html><meta charset="utf-8"><title>${esc(R.chat)}</title><style>body{font:15px system-ui;max-width:820px;margin:24px auto;padding:0 16px;color:#111}table{border-collapse:collapse;width:100%}td,th{border:1px solid #bbb;padding:6px;text-align:left}</style><h1>Informe CHAT-Analisys — ${esc(R.chat)}</h1><p>${esc(R.periodo.join(' → '))} · ${R.mensajes} mensajes · ${R.diasActivos} días activos · conflicto ${R.indiceConflictoPorMil}/1000 palabras</p><table><tr>${HD.map(h=>`<th>${h}</th>`).join('')}</tr>${R.participantes.map(p=>'<tr>'+rowP(p).map(v=>`<td>${esc(v)}</td>`).join('')+'</tr>').join('')}</table><p><small>Indicadores estadísticos orientativos. Generado ${esc(R.generado)}.</small></p>`;}
+function doDl(f){const R=repData(),d=state.chat.data,b=R.chat.replace(/[^\w\-]+/g,'_').slice(0,40)||'chat';
+  if(f==='json')dl(b+'.json','application/json',JSON.stringify(R,null,1));
+  else if(f==='md')dl(b+'.md','text/markdown',mdRep(R));
+  else if(f==='txt')dl(b+'.txt','text/plain',mdRep(R).replace(/[#|*]/g,''));
+  else if(f==='html')dl(b+'.html','text/html',htmlRep(R));
+  else if(f==='pcsv')dl(b+'_participantes.csv','text/csv;charset=utf-8','\ufeff'+HD.map(csvq).join(',')+'\n'+R.participantes.map(p=>rowP(p).map(csvq).join(',')).join('\n'));
+  else if(f==='csv')dl(b+'_mensajes.csv','text/csv;charset=utf-8','\ufeff'+'fecha_iso,remitente,mensaje\n'+d.msgs.map(m=>[csvq(new Date(m[0]).toISOString()),csvq(d.senders[m[1]]),csvq(m[2])].join(',')).join('\n'));}
+function tExp(){return `<section class="card"><h3>Exportar</h3><p class="mut">Los archivos se generan en este dispositivo.</p>${[['pdf','Informe PDF (imprimir)'],['html','Informe HTML'],['md','Informe Markdown'],['txt','Resumen TXT'],['json','Análisis JSON'],['pcsv','Participantes CSV'],['csv','Mensajes CSV (hoja de cálculo)']].map(([k,l])=>`<button class="btn sec" data-act="${k==='pdf'?'print':'dl'}" data-f="${k}">${l}</button>`).join('')}</section>`;}
+
+/* Laboratorio: audio, imágenes, texto y emojis (todo local) */
+function actOf(ch,win){const n=Math.floor(ch.length/win),r=new Float32Array(n);
+  for(let i=0;i<n;i++){let s=0;for(let j=0;j<win;j++){const v=ch[i*win+j];s+=v*v;}r[i]=Math.sqrt(s/win);}
+  const so=Float32Array.from(r).sort(),fl=so[Math.floor(n*.1)]||1e-4,th=Math.max(fl*3,.008);
+  return {r,fl,a:Array.from(r,v=>v>th)};}
+async function anaAudio(f){
+  const AC=window.AudioContext||window.webkitAudioContext,ctx=new AC();let ab;
+  try{ab=await ctx.decodeAudioData(await f.arrayBuffer());}finally{ctx.close();}
+  const sr=ab.sampleRate,win=Math.floor(sr*.05),c0=ab.getChannelData(0);let pk=0,cl=0,sq=0;
+  for(let i=0;i<c0.length;i++){const v=Math.abs(c0[i]);if(v>pk)pk=v;if(v>.99)cl++;sq+=v*v;}
+  const A=actOf(c0,win),n=A.a.length;let act=0,segs=0,run=0,lp=0,on=false,ar=0;
+  for(let i=0;i<n;i++){if(A.a[i]){act++;ar+=A.r[i]**2;if(!on){segs++;on=true;}run=0;}else{on=false;run++;if(run>lp)lp=run;}}
+  const db=v=>v>0?20*Math.log10(v):-120;
+  const o={name:f.name,size:f.size,dur:ab.duration,sr,chs:ab.numberOfChannels,peak:db(pk),speech:db(act?Math.sqrt(ar/act):0),floor:db(A.fl),act:n?act/n*100:0,segs,pause:lp*.05,clip:cl/c0.length*100,env:[]};
+  const B=Math.min(64,n),k=Math.floor(n/B)||1;for(let b=0;b<B;b++){let m=0;for(let i=b*k;i<(b+1)*k&&i<n;i++)if(A.r[i]>m)m=A.r[i];o.env.push(m);}
+  if(ab.numberOfChannels>1){const A2=actOf(ab.getChannelData(1),win),m=Math.min(n,A2.a.length);let a1=0,both=0;for(let i=0;i<m;i++){if(A2.a[i])a1++;if(A2.a[i]&&A.a[i])both++;}o.st={l:o.act,r:m?a1/m*100:0,over:m?both/m*100:0};}
+  return o;}
+function audHtml(r){const q=r.act<5?'casi sin voz detectable':r.floor>-35?'ruido de fondo alto':r.speech<-35?'nivel de voz bajo':'nivel adecuado';
+  return `<section class="card"><h3>${esc(r.name)}</h3><div class="kpis">${kpi('Duración',fmtT(r.dur))}${kpi('Actividad',r.act.toFixed(0)+'%')}${kpi('Segmentos',r.segs)}${kpi('Pausa máx.',r.pause.toFixed(1)+' s')}${kpi('Nivel voz',r.speech.toFixed(0)+' dB')}${kpi('Ruido base',r.floor.toFixed(0)+' dB')}</div>${barSvg(r.env,['0:00',fmtT(r.dur)])}<ul><li>Calidad: <b>${q}</b>${r.clip>.1?' · saturación '+r.clip.toFixed(2)+'%':''}.</li><li>${r.sr} Hz · ${r.chs} canal(es) · ${(r.size/1024).toFixed(0)} KB · pico ${r.peak.toFixed(1)} dBFS.</li>${r.st?`<li>Canal izq. activo ${r.st.l.toFixed(0)}% · der. ${r.st.r.toFixed(0)}% · simultáneo ${r.st.over.toFixed(0)}% (en grabaciones de llamada puede separar a cada interlocutor).</li>`:''}</ul><p class="mut">Análisis acústico local por energía. No transcribe, no identifica personas ni infiere emociones por la voz.</p></section>`;}
+async function anaImg(f){
+  const buf=await f.arrayBuffer(),hex=[...new Uint8Array(await crypto.subtle.digest('SHA-256',buf))].map(b=>b.toString(16).padStart(2,'0')).join('');
+  const bm=await createImageBitmap(new Blob([buf],{type:f.type})),S=64,c=document.createElement('canvas');c.width=c.height=S;
+  const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(bm,0,0,S,S);const px=x.getImageData(0,0,S,S).data;
+  let L=0,sat=0;const g=new Float32Array(S*S),qc=new Map();
+  for(let i=0;i<S*S;i++){const r=px[i*4],gg=px[i*4+1],b=px[i*4+2],mx=Math.max(r,gg,b),mn=Math.min(r,gg,b);g[i]=.299*r+.587*gg+.114*b;L+=g[i];sat+=mx?(mx-mn)/mx:0;const k=(r>>6)*16+(gg>>6)*4+(b>>6);qc.set(k,(qc.get(k)||0)+1);}
+  let lv=0,ln=0;for(let y=1;y<S-1;y++)for(let xx=1;xx<S-1;xx++){const i=y*S+xx,l=4*g[i]-g[i-1]-g[i+1]-g[i-S]-g[i+S];lv+=l*l;ln++;}
+  const pal=[...qc.entries()].sort((a,b)=>b[1]-a[1]).slice(0,5).map(([k])=>`rgb(${(k>>4)*64+32},${((k>>2)&3)*64+32},${(k&3)*64+32})`);
+  const txt=new TextDecoder('latin1').decode(new Uint8Array(buf,0,Math.min(buf.byteLength,65536)));
+  const t=document.createElement('canvas'),sc=Math.min(1,200/Math.max(bm.width,bm.height));t.width=Math.round(bm.width*sc);t.height=Math.round(bm.height*sc);t.getContext('2d').drawImage(bm,0,0,t.width,t.height);
+  return {name:f.name,size:f.size,w:bm.width,h:bm.height,hex,bright:L/(S*S)/255*100,sat:sat/(S*S)*100,sharp:Math.sqrt(lv/ln),pal,exif:/Exif\0\0/.test(txt),dt:(/\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2}/.exec(txt)||[])[0]||'',thumb:t.toDataURL('image/jpeg',.7)};}
+function imgHtml(r){return `<section class="card"><div class="row"><div><h3>${esc(r.name)}</h3><div class="mut">${r.w}×${r.h} px · ${(r.size/1024).toFixed(0)} KB</div></div><img src="${r.thumb}" alt="Vista previa" style="max-width:96px;border-radius:8px"></div><div class="kpis">${kpi('Brillo',r.bright.toFixed(0)+'%')}${kpi('Saturación',r.sat.toFixed(0)+'%')}${kpi('Nitidez rel.',r.sharp.toFixed(1))}</div><div style="display:flex;gap:4px;margin:6px 0">${r.pal.map(c=>`<i style="flex:1;height:18px;border-radius:4px;background:${c}"></i>`).join('')}</div><ul><li>Metadatos EXIF: <b>${r.exif?'presentes':'no detectados'}</b>${r.dt?' · captura '+esc(r.dt):''}. WhatsApp, Telegram y Signal suelen eliminarlos.</li><li>SHA-256: <span class="mut" style="word-break:break-all">${r.hex}</span></li></ul><p class="mut">Análisis técnico local. No lee texto de capturas (OCR), no reconoce rostros ni verifica autenticidad; para analizar el contenido de una conversación usa su exportación de texto.</p></section>`;}
+function txtHtml(t){state.labTx=t;t=String(t||'').slice(0,50000);if(t.trim().length<2)return '<p class="warn">Escribe o pega un texto.</p>';
+  const w=nz(t).split(/[^\p{L}\p{N}]+/u).filter(Boolean);let p=0,q=0,ng=0;
+  for(const x of w){if(NEGATORS.has(x)){ng=2;continue;}let a=POS.has(x),b=NEG.has(x);if(a||b){if(ng>0){const z=a;a=b;b=z;}a?p++:q++;}if(ng>0)ng--;}
+  const em=t.match(EMO_RE)||[],ec=new Map();let ep=0,eq=0;for(const x of em){ec.set(x,(ec.get(x)||0)+1);if(POSE.includes(x))ep++;else if(NEGE.includes(x))eq++;}
+  const sc=p+ep-q-eq;
+  return `<section class="card insight"><h3>Resultado</h3><div class="kpis">${kpi('Palabras',nf(w.length))}${kpi('Emojis',em.length)}${kpi('Positivos',p+ep)}${kpi('Negativos',q+eq)}${kpi('Preguntas',(t.match(/\?/g)||[]).length)}${kpi('Exclam.',(t.match(/!/g)||[]).length)}</div><p>Tono estimado: <b>${sc>0?'positivo':sc<0?'negativo':'neutral o mixto'}</b>.</p>${em.length?`<div class="chips">${[...ec.entries()].sort((a,b)=>b[1]-a[1]).slice(0,16).map(([k,v])=>`<span>${k} <b>${v}</b></span>`).join('')}</div>`:''}<p class="mut">Léxico ES/EN local; la ironía y el contexto no se detectan.</p></section>`;}
+function vLab(){const T=[['aud','Audio y llamadas'],['img','Imágenes'],['txt','Texto y emojis']];
+  const tabs=`<div class="tabs">${T.map(([k,l])=>`<button data-act="labtab" data-v="${k}" class="${state.lab===k?'on':''}">${l}</button>`).join('')}</div>`;
+  const body=state.lab==='aud'?`<section class="card"><h3>Analizar audio</h3><p class="mut">Notas de voz y llamadas grabadas de WhatsApp (.opus/.ogg), Telegram (.ogg), Signal (.aac/.m4a), además de .mp3 y .wav. Se decodifica en tu dispositivo y no se guarda.</p><button class="btn" data-act="pickaud">Elegir audio(s)</button></section>`
+   :state.lab==='img'?`<section class="card"><h3>Analizar imágenes</h3><p class="mut">Capturas y fotos de cualquier plataforma: dimensiones, color, nitidez, metadatos y huella SHA-256.</p><button class="btn" data-act="pickimg">Elegir imagen(es)</button></section>`
+   :`<section class="card"><h3>Texto y emojis</h3><label>Pega mensajes o emojis<textarea id="tx" rows="5" style="width:100%;margin-top:4px;padding:11px 12px;border-radius:10px;border:1px solid var(--line2);background:#111A28;color:var(--ink);font:15px system-ui">${esc(state.labTx)}</textarea></label><button class="btn" data-act="txtan">Analizar</button></section>`;
+  return tabs+body+(state.labRes[state.lab]||'');}
+document.addEventListener('change',async e=>{const t=e.target;if(t.id!=='fa'&&t.id!=='fi')return;
+  const fs=[...t.files],k=t.id==='fa'?'aud':'img';t.value='';let h='';toast('Analizando…',30000);
+  for(const f of fs){try{h+=k==='aud'?audHtml(await anaAudio(f)):imgHtml(await anaImg(f));}
+    catch(x){h+=`<p class="warn">${esc(f.name)}: ${esc(k==='aud'?'este navegador no pudo decodificar el formato (p. ej. AMR). Conviértelo a .m4a, .mp3 o .wav.':x.message)}</p>`;}}
+  state.labRes[k]=h+(state.labRes[k]||'');toast('Listo',1500);if(state.view==='lab')render();});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;const a=t.dataset.act;
+  if(a==='labtab'){state.lab=t.dataset.v;render();}
+  else if(a==='pickaud')$('#fa').click();else if(a==='pickimg')$('#fi').click();
+  else if(a==='txtan'){state.labRes.txt=txtHtml($('#tx').value);render();}
+  else if(a==='dl')doDl(t.dataset.f);});
+
 /* ---------- Render / eventos ---------- */
 function render(){
   const v=state.view,m=$('#main');
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===(v==='chat'?'chats':v)));
   $('#back').hidden=v!=='chat';$('#logo').hidden=v==='chat';
   $('#title').textContent=v==='chat'?state.chat.meta.name:'CHAT-Analisys';
-  m.innerHTML=v==='chats'?vChats():v==='numeros'?vNums():v==='ajustes'?vSet():vChat();
+  m.innerHTML=v==='chats'?vChats():v==='numeros'?vNums():v==='ajustes'?vSet():v==='lab'?vLab():vChat();
   if(v==='chat'&&state.tab==='bus')doSearch();
   if(v==='ajustes')storageInfo();
   if(v!=='chat')window.scrollTo(0,0);
